@@ -1,0 +1,20 @@
+{
+  "name": "lcomernbootcamp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bulsaraharshil/MERN_Project.git"
+  },
+  "author": "Harshil Bulsara",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bulsaraharshil/MERN_Project/issues"
+  },
+  "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client && npm install --prefix server",
+  "homepage": "https://github.com/bulsaraharshil/MERN_Project#readme"
+}
