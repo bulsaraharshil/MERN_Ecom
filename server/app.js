@@ -52,6 +52,10 @@ if (process.env.NODE_ENV === "production") {
 //PORT
 const port = process.env.PORT || 9000;
 
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static("client/build"));
+}
+
 //Starting a Server
 app.listen(port, () => {
   console.log(`app is running at ${port}`);
