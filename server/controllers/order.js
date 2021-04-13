@@ -31,7 +31,7 @@ exports.createOrder = (req,res) =>{
 
 exports.getAllOrders = (req,res) =>{
     Order.find()
-    .populate("user" , "_id name")
+    .populate("user" , "_id name")		 //populating user schema with its id and name
     .exec((err, order)=>{
         if(err){
             return res.status(400).json({
@@ -42,14 +42,14 @@ exports.getAllOrders = (req,res) =>{
     })
 }
 
-exports.getorderStatus = (req,res) =>{
-    res.json(Order.schema.path("status").enumValues)
+exports.getorderStatus = (req,res) =>{	
+    res.json(Order.schema.path("status").enumValues)	//accessing order schema enum values
 }
 
 exports.updateStatus = (req,res) =>{
     Order.update(
         {_id:req.body.orderId},
-        {$set:{status: req.body.status}},
+        {$set:{status: req.body.status}}, //updating the status based on id
         (err, order)=>{
             if(err){
                 return res.status(400).json({

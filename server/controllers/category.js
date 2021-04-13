@@ -43,8 +43,9 @@ exports.getAllCategories = (req, res) => {
 };
 
 exports.updateCategory = (req, res) => {
-  const category = req.category;
-  category.name = req.body.name;
+  const category = req.category; // we are able to get it because of middlewear and its parameters declared above
+  category.name = req.body.name; // this line is responsible for grabbing category name from front end through req.body
+  
   category.save((err, updatedCategory) => {
     if (err) {
       return res.status(400).json({
@@ -63,6 +64,5 @@ exports.removeCategory = (req, res) => {
         err: "Failed to delete category",
       });
     }
-    res.json({ message: category.name + " is successfully deleted" });
-  });
+    message: `${category.name} category is successfully deleted`,);
 };

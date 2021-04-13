@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "build": "cd client && npm run build",
-  "install-client": "cd client && npm start",
-  "heroku-postbuild": "npm run install-client && npm run build",
   "scripts": {
     "start": "node src/index.js",
     "build": "webpack",

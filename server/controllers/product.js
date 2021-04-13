@@ -1,8 +1,8 @@
 //same file name should be given to both route and controller as controller will control route
 const Product = require("../models/product");
 const formidable = require("formidable");
-const _ = require("lodash");
-const fs = require("fs"); //fs:file system
+const _ = require("lodash");			//Lodash makes JavaScript easier by taking the hassle out of working with arrays, numbers, objects, strings, etc by providing inbuilt functions
+const fs = require("fs"); ////accessing path of image so we need fs:file system
 
 exports.getProductById = (req, res, next, id) => {
   Product.findById(id)
@@ -22,7 +22,7 @@ exports.createProduct = (req, res) => {
   let form = new formidable.IncomingForm(); //form is another method like json, form is used because we have image to work with
   form.keepExtensions = true; //this will keep extensions like png,jpg,etc
 
-  form.parse(req, (err, fields, files) => {
+  form.parse(req, (err, fields, files) => {	//	Parses an incoming Node.js request containing form data. If callback is provided, all fields and files are collected and passed to the callback.
     // this is the syntax
     if (err) {
       return res.status(400).json({
@@ -38,8 +38,7 @@ exports.createProduct = (req, res) => {
       });
     }
 
-    let product = new Product(fields);
-
+    let product = new Product(fields);	//all the field of products are brought here
     //handle file here
     if (files.photo) {
       if (files.photo.size > 3000000) {
@@ -73,6 +72,7 @@ exports.getProduct = (req, res) => {
 //middlewear for loading photos
 exports.photo = (req, res, next) => {
   if (req.product.photo.data) {
+ //if photo is having data then only proceed
     res.set("Content-Type", req.product.photo.contentType);
     return res.send(req.product.photo.data);
   }
@@ -97,8 +97,8 @@ exports.deleteProduct = (req, res) => {
 
 //update controller
 exports.updateProduct = (req, res) => {
-  let form = new formidable.IncomingForm(); //form is another method like json, form is used because we have image to work with
-  form.keepExtensions = true; //this will keep extensions like png,jpg,etc
+  let form = new formidable({ keepExtensions: true}); //form is another method like json, form is used because we have image to work with
+  
 
   form.parse(req, (err, fields, files) => {
     // this is the syntax
@@ -109,7 +109,7 @@ exports.updateProduct = (req, res) => {
     }
     // updation code
     let product = req.product;
-    product = _.extend(product, fields); //using lodash
+    product = _.extend(product, fields); //using lodash to update fields in product
 
     //handle file here
     if (files.photo) {
@@ -138,7 +138,7 @@ exports.updateProduct = (req, res) => {
 
 //product listing
 exports.getAllProducts = (req, res) => {
-  let limit = req.query.limit ? parseInt(req.query.limit) : 8;
+  let limit = req.query.limit ? parseInt(req.query.limit) : 8;	//parseInt is used to convert string to int
   let sortBy = req.query.sortBy ? req.query.sortBy : "_id";
   Product.find()
     .select("-photo") //'-' is to deselect that particular field
@@ -156,6 +156,7 @@ exports.getAllProducts = (req, res) => {
 };
 
 exports.getAllUniqueCategories = (req, res) => {
+     //syntax of distinct, sitinct is used to get all the distinct or unique values 
   Product.distinct("category", {}, (err, category) => {
     if (err) {
       return res.status(400).json({
@@ -168,15 +169,17 @@ exports.getAllUniqueCategories = (req, res) => {
 
 exports.updateStock = (req, res, next) => {
   let myOperations = req.body.order.products.map((prod) => {
+    //In req.body we have orders and in that we have products and then we map though each product therefore we write req.body.order.products.map
     //looping through each product
     return {
+      //all these is in documentaion of bulkWrite
       updateOne: {
         filter: { _id: prod._id }, //finding the product with id
-        update: { $inc: { stock: -prod.count, sold: +prod.count } }, //updating that product
+        update: { $inc: { stock: -prod.count, sold: +prod.count } }, //updating the stocks and sold, $inc: is incrementing
       },
     };
   });
-
+  //syntax of bulkWrite
   Product.bulkWrite(myOperations, {}, (err, products) => {
     if (err) {
       return res.status(400).json({

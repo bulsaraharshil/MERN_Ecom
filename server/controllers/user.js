@@ -9,7 +9,10 @@ exports.getUserById = (req,res,next,id) => {        //getUserById will work with
                 err:"No user was found in DB"
             })
         }
-        req.profile = user  //setting the profile key to req object with the value of user
+        req.profile = user  
+  	//req.profile contains the info of authenticated user when we secure the route with JWT. If the user is not authenticated then req.profile is an empty object
+	
+	//setting the profile key to req object with the value of user
         next()
     })
 }
@@ -57,7 +60,7 @@ exports.userPurchaseList = (req,res) => {
 //this is a middlewear
 exports.pushOrderInPurchaseList = (req,res,next) =>{
     let purchases = []
-    req.body.order.products.forEach(product =>{
+    req.body.order.products.forEach(product =>{			 // products is an entire list in which there is an individual product that we want to loop through
         purchases.push({
             _id: product._id,
             name:product.name,

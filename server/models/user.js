@@ -40,10 +40,11 @@ var userSchema = new mongoose.Schema({
   
 }, {timestamps:true} );
 
+//creating virtual fields
 
-userSchema.virtual("password")
+userSchema.virtual("password")	//here password is a virtual field
     .set(function(password){
-        this._password=password   //_ means private variable
+        this._password=password   	
         this.salt=uuidv1();
         this.encry_password=this.securePassword(password);
     })
@@ -54,14 +55,14 @@ userSchema.virtual("password")
 
 
 userSchema.methods = {
-    authenticate:function(plainpassword){
+    authenticate:function(plainpassword){	//authenticate is a function
         return this.securePassword(plainpassword) === this.encry_password
     },
 
-    securePassword:function(plainpassword){             //this function will return encrypted password
-        if (!plainpassword) return "";
+    securePassword:function(plainpassword){             //declaring a method named securePassword, this function will return encrypted password
+        if (!plainpassword) return "";		//// here empty ""  is passed so that mongoose generates a error and it is inbuilt functionality that when empty "" is passed mongoose generates error
         try{
-            return crypto.createHmac('sha256', this.salt)   
+            return crypto.createHmac('sha256', this.salt)   	//using crypto to encrypt the password
             .update(plainpassword)
             .digest('hex');
         }catch(error){

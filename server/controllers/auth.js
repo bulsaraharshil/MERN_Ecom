@@ -5,9 +5,9 @@ var jwt = require("jsonwebtoken");
 var expressJwt = require("express-jwt");
 
 exports.signup = (req, res) => {
-  const errors = validationResult(req); //defining errrors
+  const errors = validationResult(req); //defining errrors as validationResult binds errors with req so we define errors= validationResult(req)
 
-  if (!errors.isEmpty()) {
+  if (!errors.isEmpty()) {				//all this thing is mentioned in documentation of express-validator
     return res.status(422).json({
       error: errors.array()[0].msg,
     });
@@ -17,23 +17,25 @@ exports.signup = (req, res) => {
   //It is the info which we are passing in postman in curly braces {} in the body raw data.
   //For parsing the req we are using bodyParser.json() in app.js, also we are parsing the data in JSON format
   user.save((err, user) => {
+    console.log(err);
     if (err) {
       return res.status(400).json({
         err: "NOT able to save user in DB",
       });
+    } else {
+      res.json({
+        name: user.name,
+        email: user.email,
+        id: user._id,
+      });
     }
-    res.json({
-      name: user.name,
-      email: user.email,
-      id: user._id,
-    });
   });
 };
-// exports.signup = (req,res)=>{
-//     console.log("REQ BODY", req.body);      //body parser handler
-//    res.json({
-//        message:"Signup route works!!!"
-//    })
+// exports.signup = (req, res) => {
+//   console.log("REQ BODY", req.body); //body parser handler
+//   res.json({
+//     message: "Signup route works!!!",
+//   });
 // };
 
 exports.signin = (req, res) => {
@@ -47,14 +49,14 @@ exports.signin = (req, res) => {
     });
   }
 
-  User.findOne({ email }, (err, user) => {
+  User.findOne({ email }, (err, user) => {		    //it will find one user based on email address
     if (err || !user) {
       return res.status(400).json({
         error: "USER email does not exists",
       });
     }
 
-    if (!user.authenticate(password)) {
+    if (!user.authenticate(password)) {			// if authentication fails then it will execute this block, here authenticate method comes from user model where we have declared it based on password
       return res.status(401).json({
         error: "Email and password do not match",
       });
@@ -63,11 +65,12 @@ exports.signin = (req, res) => {
     //create token
     const token = jwt.sign({ _id: user._id }, process.env.SECRET);
     //put token in cookie
-    res.cookie("token", token, { expire: new Date() + 9999 });
+    res.cookie("token", token, { expire: new Date() + 9999 }); //expire is used to define for how much time token should remain in cookie (this all is mentioned in documentation of express res.cookie)
 
-    //send response to front end
+
+    //send response to front end(this is important because it will give response to us in our postman including token and user object with id,name,email & role)
     const { _id, name, email, role } = user;
-    return res.json({ token, user: { _id, name, email, role } });
+    return res.json( token, {user: { _id, name, email, role } });
   });
 };
 
@@ -87,7 +90,11 @@ exports.isSignedIn = expressJwt({
 
 //custom middlewares
 exports.isAuthenticated = (req, res, next) => {
-  let checker = req.profile && req.auth && req.profile._id == req.auth._id; //checker will check if user is signedin or not
+  let checker = req.profile && req.auth && req.profile._id == req.auth._id; 
+  //req.profile contains the info of authenticated user when we secure the route with JWT. If the user is not authenticated then req.profile is an empty object
+
+  //checker will check if user is signedin or not(we are setting profile in front end so we use here it as req.profile)
+
   if (!checker) {
     return res.status(403).json({
       error: "ACCESS DENIED",

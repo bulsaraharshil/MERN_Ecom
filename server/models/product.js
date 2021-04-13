@@ -33,8 +33,8 @@ const productSchema =new mongoose.Schema({
         default: 0
     },
     photo:{
-        data: Buffer,
-        contentType: String
+        data: Buffer,		//buffer is used when we want to store something in binary form in this case images
+        contentType: String	//contentType header is used to indicate media type of resource
     }
 }, {timestamps: true}
 );
