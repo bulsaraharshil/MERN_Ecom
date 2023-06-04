@@ -41,7 +41,7 @@ const ManageCategories = () => {
       </Link>
       <div className="row">
         <div className="col-12">
-          <h2 className="text-center text-white my-3">Total 3 products</h2>
+          <h2 className="text-center text-white my-3">Total {categories.length} categories</h2>
           {categories.map((category, index) => {
             return (
               <div key={index} className="row text-center mb-2 ">
